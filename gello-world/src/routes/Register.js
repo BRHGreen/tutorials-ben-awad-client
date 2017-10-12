@@ -1,5 +1,7 @@
 import React from 'react';
-import { Input } from 'antd'
+import { Button, Input } from 'antd'
+import { gql, graphql } from 'react-apollo'
+
 class Register extends React.Component {
   state = {
     username: ''
@@ -15,6 +17,13 @@ class Register extends React.Component {
     }
   }
 
+  onSubmit = async () => {
+    const response = await this.props.mutate({
+      variables: this.state,
+    })
+    console.log(response);
+  }
+
   render () {
     return (
       <div>
@@ -23,11 +32,19 @@ class Register extends React.Component {
           name='username'
           placeholder='username'
           onChange={e => this.onChange(e)}
-          value={this.state.username} 
+          value={this.state.username}
           />
+          <Button onClick={() => this.onSubmit()} type='primary'>Register</Button>
       </div>
     )
   }
 }
+const mutation = gql`
+mutation ($username: String!) {
+  createUser (username: $username) {
+   id
+   username
+  }
+}`;
 
-export default Register
+export default graphql(mutation)(Register)
